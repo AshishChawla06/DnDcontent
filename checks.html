@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>D&D CHECKS – QUICK REFERENCE</title>
+  <style>
+    /* ===== Theme: background images via CSS variables ===== */
+    :root {
+      --bg-image: url('images/bg-light.jpg'); /* Light mode background */
+      --primary: #6f42c1;                    /* Purple accent */
+      --on-primary: #ffffff;
+      --on-bg: #1e1b22;
+      --surface: rgba(255,255,255,0.75);     /* Glass surface */
+      --on-surface: #2a2730;
+      --elev: rgba(80,46,120,0.15);
+      --table-border: rgba(42,39,48,0.25);
+    }
+    [data-theme="dark"] {
+      --bg-image: url('images/bg-dark.jpg'); /* Dark mode background */
+      --primary: #c3a6ff;
+      --on-primary: #2b164f;
+      --on-bg: #ece7f5;
+      --surface: rgba(33,28,41,0.65);
+      --on-surface: #ece7f5;
+      --elev: rgba(0,0,0,0.35);
+      --table-border: rgba(236,231,245,0.25);
+    }
+
+    /* ===== Base ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--on-bg);
+      background-image: var(--bg-image);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      padding: 4.25rem 1rem 1.25rem;
+      transition: color .25s ease, background .25s ease;
+    }
+
+    /* ===== Top Bar (Tabs + Dark Mode) ===== */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 6px 18px var(--elev);
+      z-index: 100;
+      padding: 0 .75rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .tab {
+      text-decoration: none;
+      color: var(--on-surface);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: .5rem .9rem;
+      border-radius: 10px;
+      transition: color .2s ease, background .2s ease, transform .06s ease;
+    }
+    .tab:hover { color: var(--primary); background: rgba(111,66,193,0.08); }
+    .tab.active {
+      color: var(--on-primary);
+      background: var(--primary);
+      box-shadow: 0 6px 14px var(--elev);
+    }
+
+    /* Dark mode toggle */
+    .theme-switch {
+      position: absolute;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .9rem;
+      color: var(--on-surface);
+    }
+    .switch {
+      width: 44px; height: 24px;
+      -webkit-appearance: none; appearance: none;
+      background: var(--surface);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,0.06), inset 0 0 8px var(--elev);
+      transition: background .25s ease;
+    }
+    .switch::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 20px; height: 20px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px var(--elev);
+      transition: transform .25s ease;
+    }
+    .switch:checked::after { transform: translateX(20px); }
+
+    /* ===== Heading ===== */
+    h1 {
+      text-align: center;
+      color: var(--on-surface);
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+      margin-bottom: .75rem;
+      text-transform: uppercase;
+    }
+    .subtitle {
+      text-align: center;
+      opacity: .9;
+      margin-bottom: .75rem;
+      font-size: .95rem;
+    }
+
+    /* ===== Card Sections (Glassmorphism) ===== */
+    .section {
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      box-shadow: 0 10px 36px var(--elev);
+      margin: 1rem auto;
+      padding: 1rem 1.25rem;
+      max-width: 740px;
+      transition: background .25s ease, box-shadow .25s ease;
+    }
+    details { border-radius: 12px; }
+    summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--on-surface);
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      user-select: none;
+      font-size: 1rem;
+    }
+    summary::marker { display: none; }
+    details[open] summary { color: var(--primary); }
+
+    /* ===== Table ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: .65rem;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 1px solid var(--table-border);
+      padding: .55rem .6rem;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: var(--primary);
+      color: var(--on-primary);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      font-size: .92rem;
+    }
+    td { color: var(--on-surface); }
+
+    /* Column widths for clean truncation on small screens */
+    .col-ability { width: 38%; }
+    .col-example {
+      width: 62%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 520px) {
+      body { padding-top: 4.5rem; }
+      .tab { padding: .45rem .7rem; font-size: .9rem; }
+      th, td { padding: .5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar with tabs and dark mode -->
+  <div class="topbar">
+    <nav class="tabs" aria-label="Navigation Tabs">
+      <a class="tab active" href="checks.html">Checks</a>
+      <a class="tab" href="spell-slots.html">Spell Slots</a>
+      <a class="tab" href="combat-flow.html">Combat Flow</a>
+    </nav>
+    <div class="theme-switch" aria-label="Theme toggle">
+      <input type="checkbox" id="darkToggle" class="switch" />
+      <label for="darkToggle">Dark Mode</label>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <h1>D&D CHECKS – QUICK REFERENCE</h1>
+  <div class="subtitle">Expandable sections • Clean purple UI • Fast in-session lookup</div>
+
+  <!-- Ability Checks -->
+  <div class="section">
+    <details open>
+      <summary>Ability Checks</summary>
+      <table role="table" aria-label="Ability Checks">
+        <thead>
+          <tr>
+            <th class="col-ability" scope="col">Ability</th>
+            <th class="col-example" scope="col">Example Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="col-ability">Strength</td><td class="col-example">Lift, shove, break door</td></tr>
+          <tr><td class="col-ability">Dexterity</td><td class="col-example">Balance, dodge, sneak</td></tr>
+          <tr><td class="col-ability">Constitution</td><td class="col-example">Endure poison, hold breath</td></tr>
+          <tr><td class="col-ability">Intelligence</td><td class="col-example">Recall lore, solve puzzle</td></tr>
+          <tr><td class="col-ability">Wisdom</td><td class="col-example">Spot danger, sense motive</td></tr>
+          <tr><td class="col-ability">Charisma</td><td class="col-example">Persuade, perform, intimidate</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+
+  <!-- Skill Checks -->
+  <div class="section">
+    <details>
+      <summary>Skill Checks</summary>
+      <table role="table" aria-label="Skill Checks">
+        <thead>
+          <tr>
+            <th class="col-ability" scope="col">Skill</th>
+            <th class="col-example" scope="col">Example Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="col-ability">Acrobatics (Dex)</td><td class="col-example">Flip, escape a grapple</td></tr>
+          <tr><td class="col-ability">Stealth (Dex)</td><td class="col-example">Sneak past guards</td></tr>
+          <tr><td class="col-ability">Perception (Wis)</td><td class="col-example">Notice hidden things</td></tr>
+          <tr><td class="col-ability">Insight (Wis)</td><td class="col-example">Detect lies or emotion</td></tr>
+          <tr><td class="col-ability">Persuasion (Cha)</td><td class="col-example">Convince someone</td></tr>
+          <tr><td class="col-ability">Investigation (Int)</td><td class="col-example">Search for clues</td></tr>
+          <tr><td class="col-ability">Religion (Int)</td><td class="col-example">Identify divine symbols</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+
+  <!-- Saving Throws -->
+  <div class="section">
+    <details>
+      <summary>Saving Throws</summary>
+      <table role="table" aria-label="Saving Throws">
+        <thead>
+          <tr>
+            <th class="col-ability" scope="col">Saving Throw</th>
+            <th class="col-example" scope="col">Example Threat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="col-ability">Strength</td><td class="col-example">Avoid being pushed or restrained</td></tr>
+          <tr><td class="col-ability">Dexterity</td><td class="col-example">Dodge fireballs or falling debris</td></tr>
+          <tr><td class="col-ability">Constitution</td><td class="col-example">Resist poison or disease</td></tr>
+          <tr><td class="col-ability">Intelligence</td><td class="col-example">Resist mind control</td></tr>
+          <tr><td class="col-ability">Wisdom</td><td class="col-example">Resist illusions or charm</td></tr>
+          <tr><td class="col-ability">Charisma</td><td class="col-example">Resist magical banishment</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+
+  <!-- Attack Rolls -->
+  <div class="section">
+    <details>
+      <summary>Attack Rolls</summary>
+      <table role="table" aria-label="Attack Rolls">
+        <thead>
+          <tr>
+            <th class="col-ability" scope="col">Roll</th>
+            <th class="col-example" scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-ability"><code>d20 + attack bonus</code></td>
+            <td class="col-example">Compare to target AC — meet or beat to hit</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+
+  <!-- Initiative -->
+  <div class="section">
+    <details>
+      <summary>Initiative</summary>
+      <table role="table" aria-label="Initiative">
+        <thead>
+          <tr>
+            <th class="col-ability" scope="col">Roll</th>
+            <th class="col-example" scope="col">Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-ability"><code>d20 + Dexterity modifier</code></td>
+            <td class="col-example">Determines turn order at the start of combat</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+
+  <script>
+    // Persisted Dark Mode Toggle
+    const toggle = document.getElementById('darkToggle');
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    if (saved === 'dark') toggle.checked = true;
+
+    toggle.addEventListener('change', () => {
+      const theme = toggle.checked ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    });
+  </script>
+</body>
+</html>
